@@ -20,7 +20,28 @@ function getStatus(convo: Conversation) {
 export async function conversationRoutes(app: FastifyInstance) {
 
     // 📋 Listar conversaciones
-    app.get("/api/conversations", async () => {
+    app.get("/api/conversations", {
+        schema: {
+            tags: ["Conversations"],
+            summary: "Listar todas las conversaciones",
+            response: {
+                200: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            phone: { type: "string" },
+                            lastMessageAt: { type: "number" },
+                            mode: { type: "string" },
+                            needsHuman: { type: "boolean" },
+                            status: { type: "string" },
+                            lastMessage: { type: "object" },
+                        },
+                    },
+                },
+            },
+        },
+    }, async () => {
         try {
             const conversations = await listConversations();
 
@@ -97,7 +118,16 @@ export async function conversationRoutes(app: FastifyInstance) {
 
 
     // 💬 Obtener historial completo
-    app.get("/api/conversations/:phone", async (req: any) => {
+    app.get("/api/conversations/:phone", {
+        schema: {
+            tags: ["Conversations"],
+            summary: "Obtener historial de una conversación",
+            params: {
+                type: "object",
+                properties: { phone: { type: "string" } },
+            },
+        },
+    }, async (req: any) => {
         const phone = normalizePhone(req.params.phone);
         const conversation = await getConversation(phone);
 
@@ -125,7 +155,21 @@ export async function conversationRoutes(app: FastifyInstance) {
 
 
     // 🔀 Cambiar modo bot ↔ humano
-    app.post("/api/conversations/:phone/mode", async (req: any) => {
+    app.post("/api/conversations/:phone/mode", {
+        schema: {
+            tags: ["Conversations"],
+            summary: "Cambiar modo bot/humano",
+            params: {
+                type: "object",
+                properties: { phone: { type: "string" } },
+            },
+            body: {
+                type: "object",
+                required: ["mode"],
+                properties: { mode: { type: "string", enum: ["bot", "human"] } },
+            },
+        },
+    }, async (req: any) => {
         const phone = normalizePhone(req.params.phone);
         const { mode } = req.body;
 
@@ -145,7 +189,16 @@ export async function conversationRoutes(app: FastifyInstance) {
         };
     });
 
-    app.post("/api/conversations/:phone/finalizar", async (req: any) => {
+    app.post("/api/conversations/:phone/finalizar", {
+        schema: {
+            tags: ["Conversations"],
+            summary: "Finalizar conversación",
+            params: {
+                type: "object",
+                properties: { phone: { type: "string" } },
+            },
+        },
+    }, async (req: any) => {
         const phone = normalizePhone(req.params.phone);
         const convo = await finishConversation(phone);
 
@@ -153,7 +206,16 @@ export async function conversationRoutes(app: FastifyInstance) {
     });
 
     // 🗑️ Eliminar conversación completa
-    app.delete("/api/conversations/:phone", async (req: any) => {
+    app.delete("/api/conversations/:phone", {
+        schema: {
+            tags: ["Conversations"],
+            summary: "Eliminar conversación",
+            params: {
+                type: "object",
+                properties: { phone: { type: "string" } },
+            },
+        },
+    }, async (req: any) => {
         const phone = normalizePhone(req.params.phone);
 
         await deleteConversation(phone);

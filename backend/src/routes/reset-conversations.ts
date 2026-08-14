@@ -3,7 +3,29 @@ import { FastifyInstance } from "fastify";
 import { listConversations, setMode, deleteConversation } from "../services/conversations.store";
 
 export async function resetConversationsRoutes(app: FastifyInstance) {
-    app.post("/api/conversations/reset-conversations", async (req, reply) => {
+    app.post("/api/conversations/reset-conversations", {
+        schema: {
+            tags: ["System"],
+            summary: "Resetear todas las conversaciones a modo bot",
+            response: {
+                200: {
+                    type: "object",
+                    properties: {
+                        ok: { type: "boolean" },
+                        message: { type: "string" },
+                        count: { type: "number" },
+                    },
+                },
+                500: {
+                    type: "object",
+                    properties: {
+                        ok: { type: "boolean" },
+                        message: { type: "string" },
+                    },
+                },
+            },
+        },
+    }, async (req, reply) => {
         try {
             console.log("🔹 Endpoint /reset-conversations llamado"); // log inicial
 
@@ -33,7 +55,30 @@ export async function resetConversationsRoutes(app: FastifyInstance) {
     /*🧹 LIMPIEZA DE CONVERSACIONES CORRUPTAS (PRD) */
     /* curl -X POST https://pwbot-zfzs.onrender.com/api/conversations/cleanup */
     /* https://pwbot-zfzs.onrender.com/api/conversations/cleanup */
-    app.post("/api/conversations/cleanup", async (_req, reply) => {
+    app.post("/api/conversations/cleanup", {
+        schema: {
+            tags: ["System"],
+            summary: "Limpiar conversaciones corruptas",
+            response: {
+                200: {
+                    type: "object",
+                    properties: {
+                        ok: { type: "boolean" },
+                        deleted: { type: "number" },
+                        skipped: { type: "number" },
+                        total: { type: "number" },
+                    },
+                },
+                500: {
+                    type: "object",
+                    properties: {
+                        ok: { type: "boolean" },
+                        message: { type: "string" },
+                    },
+                },
+            },
+        },
+    }, async (_req, reply) => {
         try {
             console.log("🧹 [CLEANUP] Inicio limpieza de conversaciones");
 

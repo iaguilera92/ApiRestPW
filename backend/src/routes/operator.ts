@@ -8,7 +8,25 @@ function normalizePhone(phone?: string): string {
 }
 
 export async function operatorRoutes(app: FastifyInstance) {
-    app.post("/api/operator/send", async (req: any, reply) => {
+    app.post("/api/operator/send", {
+        schema: {
+            tags: ["Operator"],
+            summary: "Enviar mensaje manual a WhatsApp",
+            body: {
+                type: "object",
+                required: ["to", "text"],
+                properties: {
+                    to: { type: "string", description: "Número de teléfono destino" },
+                    text: { type: "string", description: "Texto del mensaje" },
+                },
+            },
+            response: {
+                200: { type: "object", properties: { ok: { type: "boolean" } } },
+                400: { type: "object", properties: { error: { type: "string" } } },
+                500: { type: "object", properties: { error: { type: "string" } } },
+            },
+        },
+    }, async (req: any, reply) => {
         const { to, text } = req.body || {};
 
         if (!to || !text) {

@@ -21,6 +21,52 @@ type ChatBody = {
 export async function chatRoutes(app: FastifyInstance) {
     app.post(
         "/api/chat",
+        {
+            schema: {
+                tags: ["Chat"],
+                summary: "Enviar mensaje al chatbot",
+                body: {
+                    type: "object",
+                    required: ["sessionId", "messages"],
+                    properties: {
+                        sessionId: { type: "string" },
+                        messages: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    from: { type: "string", enum: ["user", "bot"] },
+                                    text: { type: "string", nullable: true },
+                                    image: { type: "string" },
+                                    video: { type: "string" },
+                                    status: { type: "string", enum: ["sent", "delivered", "seen"] },
+                                    timestamp: { type: "string" },
+                                },
+                            },
+                        },
+                        desdeSitioWeb: { type: "boolean" },
+                    },
+                },
+                response: {
+                    200: {
+                        type: "object",
+                        properties: {
+                            phase: { type: "string" },
+                            replies: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        text: { type: "string" },
+                                        phase: { type: "string" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
         async (request: FastifyRequest<{ Body: ChatBody }>, reply) => {
             try {
                 const { sessionId, messages, desdeSitioWeb } = request.body;
