@@ -8,9 +8,13 @@ steps:
   - task: NodeTool@0
     inputs:
       versionSpec: "20.x"
-    displayName: "Install Node.js"
+      checkLatest: true
+    displayName: "Install Node.js 20"
 
-  - script: cd backend && npm install
+  - script: node --version && npm --version
+    displayName: "Verificar versión Node"
+
+  - script: cd backend && npm ci
     displayName: "Instalar dependencias"
 
   - script: cd backend && npm test
