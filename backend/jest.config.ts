@@ -5,6 +5,17 @@ const config: Config = {
     testEnvironment: "node",
     testMatch: ["**/tests/**/*.test.ts"],
     moduleFileExtensions: ["ts", "js", "json"],
+    reporters: [
+        "default",
+        ["jest-junit", {
+            outputDirectory: "./test-results",
+            outputName: "junit.xml",
+            classNameTemplate: "{classname}",
+            titleTemplate: "{title}",
+            ancestorSeparator: " > ",
+            includeConsoleOutput: true,
+        }],
+    ],
     transform: {
         "^.+\\.ts$": ["ts-jest", {
             tsconfig: {

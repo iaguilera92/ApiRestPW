@@ -10,6 +10,7 @@ import { operatorRoutes } from "./routes/operator";
 import { conversationRoutes } from "./routes/conversations";
 import { resetConversationsRoutes } from "./routes/reset-conversations";
 import { trabajosRoutes } from "./routes/trabajos";
+import { pruebasQasRoutes } from "./routes/pruebas-qas";
 
 export async function buildApp() {
     const app = Fastify({ logger: false });
@@ -55,6 +56,7 @@ export async function buildApp() {
     await conversationRoutes(app);
     await resetConversationsRoutes(app);
     await trabajosRoutes(app);
+    await pruebasQasRoutes(app);
 
     app.get("/", async (_req, reply) => {
         reply.redirect("/docs");

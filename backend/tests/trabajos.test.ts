@@ -14,9 +14,9 @@ afterAll(async () => {
     await app.close();
 });
 
-describe("CRUD /api/trabajos", () => {
+describe("Trabajos", () => {
 
-    test("GET /api/trabajos — Listar todos", async () => {
+    test("Trabajos/Buscar", async () => {
         const res = await supertest(app.server)
             .get("/api/trabajos")
             .expect(200);
@@ -24,7 +24,7 @@ describe("CRUD /api/trabajos", () => {
         expect(Array.isArray(res.body)).toBe(true);
     });
 
-    test("POST /api/trabajos — Crear trabajo de prueba", async () => {
+    test("Trabajos/Crear", async () => {
         const res = await supertest(app.server)
             .post("/api/trabajos")
             .send({
@@ -42,7 +42,7 @@ describe("CRUD /api/trabajos", () => {
         createdId = res.body.id;
     });
 
-    test("GET /api/trabajos/:id — Obtener por ID", async () => {
+    test("Trabajos/Leer", async () => {
         const res = await supertest(app.server)
             .get(`/api/trabajos/${createdId}`)
             .expect(200);
@@ -51,7 +51,7 @@ describe("CRUD /api/trabajos", () => {
         expect(res.body.nombre_cliente).toBe("Test Jest");
     });
 
-    test("PUT /api/trabajos/:id — Actualizar trabajo", async () => {
+    test("Trabajos/Actualizar", async () => {
         const res = await supertest(app.server)
             .put(`/api/trabajos/${createdId}`)
             .send({ nombre_cliente: "Test Jest Actualizado" })
@@ -60,7 +60,7 @@ describe("CRUD /api/trabajos", () => {
         expect(res.body.nombre_cliente).toBe("Test Jest Actualizado");
     });
 
-    test("DELETE /api/trabajos/:id — Eliminar trabajo", async () => {
+    test("Trabajos/Eliminar", async () => {
         const res = await supertest(app.server)
             .delete(`/api/trabajos/${createdId}`)
             .expect(200);
@@ -68,15 +68,15 @@ describe("CRUD /api/trabajos", () => {
         expect(res.body.ok).toBe(true);
     });
 
-    test("GET /api/trabajos/:id — 404 después de eliminar", async () => {
+    test("Trabajos/Verificar eliminación", async () => {
         await supertest(app.server)
             .get(`/api/trabajos/${createdId}`)
             .expect(404);
     });
 });
 
-describe("GET /health", () => {
-    test("Retorna status ok", async () => {
+describe("Sistema", () => {
+    test("Sistema/Health check", async () => {
         const res = await supertest(app.server)
             .get("/health")
             .expect(200);

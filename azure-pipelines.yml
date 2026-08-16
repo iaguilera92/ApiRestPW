@@ -14,13 +14,13 @@ stages:
           - task: UseNode@1
             inputs:
               version: "20.x"
-            displayName: "⚙️ Instalar Node.js 20"
+            displayName: "Instalar Node.js 20"
 
           - script: cd backend && npm ci
-            displayName: "⚙️ Instalar dependencias"
+            displayName: "Instalar dependencias"
 
           - script: cd backend && npm test
-            displayName: "Ejecutar tests"
+            displayName: "Ejecutar pruebas automatizadas"
             env:
               SUPABASE_URL: $(SUPABASE_URL)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
@@ -45,5 +45,10 @@ stages:
               AWS_REGION: "us-east-1"
               BUCKET_NAME: "test"
 
-          - script: echo "✅ Pruebas QAS finalizadas"
-            displayName: "✅ Resultado"
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "backend/test-results/junit.xml"
+              testRunTitle: "Pruebas QAS - API REST"
+            displayName: "Publicar resultados"
+            condition: always()
