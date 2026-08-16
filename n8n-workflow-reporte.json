@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "3597371f-6e21-450b-af05-42eb34916675",
+      "name": "Click",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-64, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM GET_CLIENTES();\n",
+        "options": {}
+      },
+      "id": "fcce4656-f2c4-442b-baf9-dfac1c604d37",
+      "name": "Get Clients DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [160, 0],
+      "credentials": {
+        "postgres": {
+          "id": "mp0lpMo9yhOpqfM4",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const clientes = $input.all().map(i => i.json);\nreturn [{ json: { clientes } }];"
+      },
+      "id": "b1c2d3e4-f5a6-7890-abcd-333333333333",
+      "name": "Agrupar Clientes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [380, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://pwbot-zfzs.onrender.com/api/servicios",
+        "options": {}
+      },
+      "id": "5ea1892d-d80d-47cf-b26e-da90229fa6ce",
+      "name": "Obtener Servicios",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const clientes = $('Agrupar Clientes').first().json.clientes;\nconst servicios = $input.all().map(i => i.json);\n\nconst tdStyle = 'padding:8px 12px;font-size:11px;border-bottom:1px solid #eee;';\nconst thStyle = 'padding:10px 12px;font-size:11px;color:#fff;text-align:left;';\n\nconst clientesRows = clientes.map(c =>\n  '<tr>' +\n  '<td style=\"' + tdStyle + '\">' + c.nombre + '</td>' +\n  '<td style=\"' + tdStyle + '\"><a href=\"' + c.url + '\" style=\"color:#0d47a1;\">' + c.sitio_web + '</a></td>' +\n  '<td style=\"' + tdStyle + '\">' + c.correo + '</td>' +\n  '<td style=\"' + tdStyle + '\">' + c.telefono + '</td>' +\n  '<td style=\"' + tdStyle + '\">' + c.valor + '</td>' +\n  '<td style=\"' + tdStyle + '\">' + (c.pagado ? '✅ Pagado' : '⏳ Pendiente') + '</td>' +\n  '</tr>'\n).join('');\n\nconst serviciosRows = servicios.map(s =>\n  '<tr>' +\n  '<td style=\"' + tdStyle + '\">' + s.titulo + '</td>' +\n  '<td style=\"' + tdStyle + '\">' + s.descripcion + '</td>' +\n  '<td style=\"' + tdStyle + 'text-align:center;\">' + s.orden + '</td>' +\n  '</tr>'\n).join('');\n\nconst html = '<div style=\"font-family:system-ui,sans-serif,Arial;font-size:14px;color:#212121;\">' +\n'<div style=\"max-width:650px;margin:auto;border:1px solid #ddd;border-radius:16px;overflow:hidden;\">' +\n'<div style=\"text-align:center;background-color:#0a0f2c;padding:5px;\">' +\n'<a href=\"https://plataformas-web.cl\" style=\"text-decoration:none;\">' +\n'<img src=\"https://plataformas-web.cl/logo-plataformas-web-correo.webp\" alt=\"Plataformas Web\" height=\"40\" style=\"vertical-align:middle;margin-top:15px\" />' +\n'</a>' +\n'<h4 style=\"color:#ffffff;margin-top:15px;font-weight:600;\">📋 Reporte General</h4>' +\n'</div>' +\n'<div style=\"padding:16px 24px 24px;background-color:white;\">' +\n'<p style=\"color:#0a0f2c;font-size:13px;font-weight:610;margin:0 0 16px;line-height:1.3;\">Hola equipo Plataformas Web,</p>' +\n'<p style=\"background-color:#e3f2fd;color:#0d47a1;padding:10px;border-radius:8px;border:1px solid #90caf9;font-weight:bold;margin:10px 0px 22px 0px;font-size:11px;\">✅ Resumen de clientes y servicios activos</p>' +\n'<h5 style=\"color:#0a0f2c;margin:20px 0 10px;font-size:13px;\">👥 Clientes (' + clientes.length + ')</h5>' +\n'<div style=\"overflow-x:auto;\">' +\n'<table style=\"width:100%;border-collapse:collapse;margin:0 0 25px;\">' +\n'<thead><tr style=\"background-color:#0a0f2c;\">' +\n'<th style=\"' + thStyle + '\">Nombre</th>' +\n'<th style=\"' + thStyle + '\">Sitio Web</th>' +\n'<th style=\"' + thStyle + '\">Correo</th>' +\n'<th style=\"' + thStyle + '\">Teléfono</th>' +\n'<th style=\"' + thStyle + '\">Valor</th>' +\n'<th style=\"' + thStyle + '\">Estado</th>' +\n'</tr></thead>' +\n'<tbody>' + clientesRows + '</tbody>' +\n'</table></div>' +\n'<h5 style=\"color:#0a0f2c;margin:20px 0 10px;font-size:13px;\">🛠️ Servicios (' + servicios.length + ')</h5>' +\n'<table style=\"width:100%;border-collapse:collapse;margin:0 0 25px;\">' +\n'<thead><tr style=\"background-color:#0a0f2c;\">' +\n'<th style=\"' + thStyle + '\">Título</th>' +\n'<th style=\"' + thStyle + '\">Descripción</th>' +\n'<th style=\"' + thStyle + 'text-align:center;\">Orden</th>' +\n'</tr></thead>' +\n'<tbody>' + serviciosRows + '</tbody>' +\n'</table>' +\n'<p style=\"margin:0;text-align:center;font-size:12px;color:#0a0f2c;\">🤝 Gracias por confiar en <strong>Plataformas Web</strong></p>' +\n'<p style=\"margin:5px 0 15px;font-size:12px;color:#444;text-align:center;\">Si tienes una idea💡nosotros podemos materializarla.</p>' +\n'</div>' +\n'<div style=\"text-align:center;background-color:#0a0f2c;color:#fff;padding:16px;\">' +\n'<p style=\"margin:4px 0;\">📞 <a href=\"tel:+56946873014\" style=\"color:#ffc002;text-decoration:none;\">+56 9 4687 3014</a></p>' +\n'<p style=\"margin:4px 0;\">📧 <a href=\"mailto:plataformas.web.cl@gmail.com\" style=\"color:#ffc002;text-decoration:none;\">plataformas.web.cl@gmail.com</a></p>' +\n'</div>' +\n'</div></div>';\n\nreturn [{ json: { html, subject: '📋 Reporte General - Plataformas Web' } }];"
+      },
+      "id": "b1c2d3e4-f5a6-7890-abcd-111111111111",
+      "name": "Generar HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [820, 0]
+    },
+    {
+      "parameters": {
+        "sendTo": "plataformas.web.cl@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-222222222222",
+      "name": "Enviar Correo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1040, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Click": {
+      "main": [[{"node": "Get Clients DB", "type": "main", "index": 0}]]
+    },
+    "Get Clients DB": {
+      "main": [[{"node": "Agrupar Clientes", "type": "main", "index": 0}]]
+    },
+    "Agrupar Clientes": {
+      "main": [[{"node": "Obtener Servicios", "type": "main", "index": 0}]]
+    },
+    "Obtener Servicios": {
+      "main": [[{"node": "Generar HTML", "type": "main", "index": 0}]]
+    },
+    "Generar HTML": {
+      "main": [[{"node": "Enviar Correo", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "99f536bae9e8b40ae4486a2ddfa66a46529a58975172e320e9b162479b3b5c70"
+  }
+}
