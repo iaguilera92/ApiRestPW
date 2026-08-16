@@ -20,8 +20,15 @@ describe("Trabajos", () => {
             .send({
                 sitio_web: "no-es-url",
                 porcentaje: 50,
-            })
-            .expect(200);
+            });
+
+        if (res.status !== 200) {
+            const b = res.body ?? {};
+            const parts: string[] = [b.error ?? `HTTP ${res.status}: ${res.text}`];
+            if (b.archivo) parts.push(`archivo: ${b.archivo}`);
+            if (b.linea)   parts.push(`linea: ${b.linea}`);
+            throw new Error(parts.join(" | "));
+        }
 
         expect(res.body).toHaveProperty("id");
     });
