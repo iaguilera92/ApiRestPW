@@ -5,45 +5,22 @@ pool:
   vmImage: "ubuntu-latest"
 
 stages:
-  - stage: Preparacion
-    displayName: "⚙️ Preparación"
-    jobs:
-      - job: Setup
-        displayName: "Instalar dependencias"
-        steps:
-          - task: UseNode@1
-            inputs:
-              version: "20.x"
-            displayName: "Instalar Node.js 20"
-
-          - script: node --version && npm --version
-            displayName: "Verificar versión Node"
-
-          - script: cd backend && npm ci
-            displayName: "Instalar paquetes npm"
-
-          - publish: backend
-            artifact: backend-app
-            displayName: "Guardar backend para siguiente stage"
-
   - stage: PruebasQAS
-    displayName: "🧪 Pruebas QAS"
-    dependsOn: Preparacion
+    displayName: "Pruebas QAS"
     jobs:
       - job: Tests
-        displayName: "Ejecutar pruebas automatizadas"
+        displayName: "Ejecutar tests"
         steps:
           - task: UseNode@1
             inputs:
               version: "20.x"
-            displayName: "Instalar Node.js 20"
+            displayName: "⚙️ Instalar Node.js 20"
 
-          - download: current
-            artifact: backend-app
-            displayName: "Descargar backend"
+          - script: cd backend && npm ci
+            displayName: "⚙️ Instalar dependencias"
 
-          - script: cd backend-app && npm test
-            displayName: "Probando servicios web (Jest + Supertest)"
+          - script: cd backend && npm test
+            displayName: "Ejecutar tests"
             env:
               SUPABASE_URL: $(SUPABASE_URL)
               SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
@@ -68,5 +45,5 @@ stages:
               AWS_REGION: "us-east-1"
               BUCKET_NAME: "test"
 
-          - script: echo "✅ Pruebas QAS finalizadas exitosamente"
-            displayName: "Resultado - Pruebas completadas"
+          - script: echo "✅ Pruebas QAS finalizadas"
+            displayName: "✅ Resultado"
