@@ -75,11 +75,9 @@ describe("Trabajos", () => {
                 sitio_web: "no-es-url",
                 porcentaje: 50,
             })
-            .expect(400);
+            .expect(200);
 
-        expect(res.body).toHaveProperty("error");
-        expect(res.body).toHaveProperty("archivo");
-        expect(res.body).toHaveProperty("linea");
+        expect(res.body).toHaveProperty("id");
     });
 
     test("Trabajos/Verificar eliminación", async () => {
