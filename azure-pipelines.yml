@@ -4,40 +4,69 @@ trigger:
 pool:
   vmImage: "ubuntu-latest"
 
-steps:
-  - task: UseNode@1
-    inputs:
-      version: "20.x"
-    displayName: "Install Node.js 20"
+stages:
+  - stage: Preparacion
+    displayName: "⚙️ Preparación del entorno"
+    jobs:
+      - job: Setup
+        displayName: "Instalar dependencias"
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: "20.x"
+            displayName: "Instalar Node.js 20"
 
-  - script: node --version && npm --version
-    displayName: "Verificar versión Node"
+          - script: node --version && npm --version
+            displayName: "Verificar versión Node"
 
-  - script: cd backend && npm ci
-    displayName: "Instalar dependencias"
+          - script: cd backend && npm ci
+            displayName: "Instalar paquetes npm"
 
-  - script: cd backend && npm test
-    displayName: "Ejecutar tests"
-    env:
-      SUPABASE_URL: $(SUPABASE_URL)
-      SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
-      GROQ_API_KEY: $(GROQ_API_KEY)
-      REDIS_URL: $(REDIS_URL)
-      PORT: "3000"
-      MOCK_AI: "true"
-      SIMULATE_OPENAI_DOWN: "false"
-      SIMULATE_PHONE: "false"
-      NODE_ENV: "test"
-      WHATSAPP_TOKEN: "test"
-      WHATSAPP_VERIFY_TOKEN: "test"
-      WHATSAPP_PHONE_NUMBER_ID: "test"
-      SMTP_HOST: "test"
-      SMTP_PORT: "587"
-      SMTP_USER: "test"
-      SMTP_PASS: "test"
-      SMTP_FROM: "test@test.cl"
-      BREVO_API_KEY: "test"
-      AWS_ACCESS_KEY_ID: "test"
-      AWS_SECRET_ACCESS_KEY: "test"
-      AWS_REGION: "us-east-1"
-      BUCKET_NAME: "test"
+          - publish: backend
+            artifact: backend-app
+            displayName: "Guardar backend para siguiente stage"
+
+  - stage: PruebasQAS
+    displayName: "🧪 Pruebas QAS - Servicios Web"
+    dependsOn: Preparacion
+    jobs:
+      - job: Tests
+        displayName: "Ejecutar pruebas automatizadas"
+        steps:
+          - task: UseNode@1
+            inputs:
+              version: "20.x"
+            displayName: "Instalar Node.js 20"
+
+          - download: current
+            artifact: backend-app
+            displayName: "Descargar backend"
+
+          - script: cd backend-app && npm test
+            displayName: "Probando servicios web (Jest + Supertest)"
+            env:
+              SUPABASE_URL: $(SUPABASE_URL)
+              SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+              GROQ_API_KEY: $(GROQ_API_KEY)
+              REDIS_URL: $(REDIS_URL)
+              PORT: "3000"
+              MOCK_AI: "true"
+              SIMULATE_OPENAI_DOWN: "false"
+              SIMULATE_PHONE: "false"
+              NODE_ENV: "test"
+              WHATSAPP_TOKEN: "test"
+              WHATSAPP_VERIFY_TOKEN: "test"
+              WHATSAPP_PHONE_NUMBER_ID: "test"
+              SMTP_HOST: "test"
+              SMTP_PORT: "587"
+              SMTP_USER: "test"
+              SMTP_PASS: "test"
+              SMTP_FROM: "test@test.cl"
+              BREVO_API_KEY: "test"
+              AWS_ACCESS_KEY_ID: "test"
+              AWS_SECRET_ACCESS_KEY: "test"
+              AWS_REGION: "us-east-1"
+              BUCKET_NAME: "test"
+
+          - script: echo "✅ Pruebas QAS finalizadas exitosamente"
+            displayName: "Resultado - Pruebas completadas"
