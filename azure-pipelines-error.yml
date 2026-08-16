@@ -1,12 +1,11 @@
-trigger:
-  - main
+trigger: none
 
 pool:
   vmImage: "ubuntu-latest"
 
 stages:
   - stage: PruebasQAS
-    displayName: "Pruebas QAS"
+    displayName: "Pruebas QAS (con error)"
     jobs:
       - job: Tests
         displayName: "Ejecutar tests"
@@ -19,7 +18,7 @@ stages:
           - script: cd backend && npm ci
             displayName: "Instalar dependencias"
 
-          - script: cd backend && npx jest --verbose tests/trabajos.test.ts
+          - script: cd backend && npx jest --verbose tests/trabajos-error.test.ts tests/trabajos.test.ts
             displayName: "Ejecutar pruebas automatizadas"
             env:
               SUPABASE_URL: $(SUPABASE_URL)
@@ -49,7 +48,7 @@ stages:
             inputs:
               testResultsFormat: "JUnit"
               testResultsFiles: "backend/test-results/junit.xml"
-              testRunTitle: "Pruebas QAS - API REST"
+              testRunTitle: "Pruebas QAS - Error simulado"
             displayName: "Publicar resultados"
             condition: always()
 

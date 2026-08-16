@@ -68,18 +68,6 @@ describe("Trabajos", () => {
         expect(res.body.ok).toBe(true);
     });
 
-    test("Trabajos/CrearConError", async () => {
-        const res = await supertest(app.server)
-            .post("/api/trabajos/crear-con-error")
-            .send({
-                sitio_web: "no-es-url",
-                porcentaje: 50,
-            })
-            .expect(200);
-
-        expect(res.body).toHaveProperty("id");
-    });
-
     test("Trabajos/Verificar eliminación", async () => {
         await supertest(app.server)
             .get(`/api/trabajos/${createdId}`)
