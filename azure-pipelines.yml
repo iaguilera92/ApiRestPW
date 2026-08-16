@@ -52,3 +52,40 @@ stages:
               testRunTitle: "Pruebas QAS - API REST"
             displayName: "Publicar resultados"
             condition: always()
+
+          - script: |
+              node -e "
+              const fs = require('fs');
+              const xml = fs.readFileSync('backend/test-results/junit.xml', 'utf8');
+              const tests = xml.match(/<testcase[^>]*\/?>[\s\S]*?(<\/testcase>|(?=<testcase|<\/testsuite))/g) || [];
+              const detalle = tests.map(tc => {
+                const name = (tc.match(/name=\"([^\"]+)\"/) || [])[1] || '';
+                const time = parseFloat((tc.match(/time=\"([^\"]+)\"/) || [])[1] || '0');
+                const failed = /<failure/.test(tc);
+                const errorMsg = failed ? (tc.match(/<failure[^>]*>([\s\S]*?)<\/failure>/) || [])[1] || '' : undefined;
+                return { nombre: name, estado: failed ? 'failed' : 'passed', duracion_ms: Math.round(time * 1000), ...(errorMsg && { error: errorMsg.trim() }) };
+              });
+              const passed = detalle.filter(d => d.estado === 'passed').length;
+              const failed = detalle.filter(d => d.estado === 'failed').length;
+              const totalTime = detalle.reduce((sum, d) => sum + d.duracion_ms, 0);
+              const body = JSON.stringify({
+                pipeline_id: '$(Build.BuildId)',
+                estado: failed > 0 ? 'failed' : 'passed',
+                total_tests: detalle.length,
+                tests_passed: passed,
+                tests_failed: failed,
+                duracion_ms: totalTime,
+                detalle: detalle,
+                origen: 'azure'
+              });
+              const https = require('https');
+              const req = https.request('$(API_URL)/api/pruebas-qas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+              }, res => { let r=''; res.on('data',c=>r+=c); res.on('end',()=>console.log('Resultado guardado:', r)); });
+              req.on('error', e => console.error('Error:', e.message));
+              req.write(body);
+              req.end();
+              "
+            displayName: "Guardar resultados en BD"
+            condition: always()
