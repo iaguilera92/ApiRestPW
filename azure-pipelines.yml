@@ -5,10 +5,9 @@ pool:
   vmImage: "ubuntu-latest"
 
 steps:
-  - task: NodeTool@0
+  - task: UseNode@1
     inputs:
-      versionSpec: "20.x"
-      checkLatest: true
+      version: "20.x"
     displayName: "Install Node.js 20"
 
   - script: node --version && npm --version
