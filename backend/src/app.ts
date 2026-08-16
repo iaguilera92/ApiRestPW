@@ -32,7 +32,8 @@ export async function buildApp() {
                 version: "1.0.0",
             },
             tags: [
-                { name: "Plataformas Web", description: "Servicios y datos de Plataformas Web" },
+                { name: "Trabajos", description: "CRUD de trabajos" },
+                { name: "Pruebas Automatizadas", description: "Resultados de pruebas QAS del pipeline" },
                 { name: "Chat", description: "Envío de mensajes al bot" },
                 { name: "Conversations", description: "Gestión de conversaciones" },
                 { name: "Operator", description: "Envío manual de mensajes por operador" },

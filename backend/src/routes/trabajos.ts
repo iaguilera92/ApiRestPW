@@ -6,8 +6,9 @@ export async function trabajosRoutes(app: FastifyInstance) {
     // 1. Listar todos los trabajos
     app.get("/api/trabajos", {
         schema: {
-            tags: ["Plataformas Web"],
-            summary: "Listar todos los trabajos",
+            tags: ["Trabajos"],
+            operationId: "Buscar",
+            summary: "Trabajos/Buscar",
             response: {
                 200: {
                     type: "array",
@@ -35,8 +36,9 @@ export async function trabajosRoutes(app: FastifyInstance) {
     // 2. Obtener un trabajo por id
     app.get("/api/trabajos/:id", {
         schema: {
-            tags: ["Plataformas Web"],
-            summary: "Obtener un trabajo por ID",
+            tags: ["Trabajos"],
+            operationId: "Leer",
+            summary: "Trabajos/Leer",
             params: {
                 type: "object",
                 properties: { id: { type: "string" } },
@@ -73,8 +75,9 @@ export async function trabajosRoutes(app: FastifyInstance) {
     // 3. Crear un trabajo
     app.post("/api/trabajos", {
         schema: {
-            tags: ["Plataformas Web"],
-            summary: "Crear un trabajo",
+            tags: ["Trabajos"],
+            operationId: "Crear",
+            summary: "Trabajos/Crear",
             body: {
                 type: "object",
                 required: ["sitio_web"],
@@ -121,8 +124,9 @@ export async function trabajosRoutes(app: FastifyInstance) {
     // 4. Actualizar un trabajo
     app.put("/api/trabajos/:id", {
         schema: {
-            tags: ["Plataformas Web"],
-            summary: "Actualizar un trabajo",
+            tags: ["Trabajos"],
+            operationId: "Actualizar",
+            summary: "Trabajos/Actualizar",
             params: {
                 type: "object",
                 properties: { id: { type: "string" } },
@@ -175,8 +179,9 @@ export async function trabajosRoutes(app: FastifyInstance) {
     // 5. Eliminar un trabajo
     app.delete("/api/trabajos/:id", {
         schema: {
-            tags: ["Plataformas Web"],
-            summary: "Eliminar un trabajo",
+            tags: ["Trabajos"],
+            operationId: "Eliminar",
+            summary: "Trabajos/Eliminar",
             params: {
                 type: "object",
                 properties: { id: { type: "string" } },

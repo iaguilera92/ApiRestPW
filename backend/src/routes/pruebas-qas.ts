@@ -5,7 +5,7 @@ export async function pruebasQasRoutes(app: FastifyInstance) {
 
     app.post("/api/pruebas-qas", {
         schema: {
-            tags: ["Plataformas Web"],
+            tags: ["Pruebas Automatizadas"],
             summary: "Registrar resultado de pruebas QAS",
             body: {
                 type: "object",
@@ -53,7 +53,7 @@ export async function pruebasQasRoutes(app: FastifyInstance) {
 
     app.get("/api/pruebas-qas", {
         schema: {
-            tags: ["Plataformas Web"],
+            tags: ["Pruebas Automatizadas"],
             summary: "Historial de pruebas QAS (últimas 10)",
             response: {
                 200: { type: "array", items: { type: "object", additionalProperties: true } },
@@ -76,7 +76,7 @@ export async function pruebasQasRoutes(app: FastifyInstance) {
 
     app.get("/api/pruebas-qas/ultimo", {
         schema: {
-            tags: ["Plataformas Web"],
+            tags: ["Pruebas Automatizadas"],
             summary: "Última ejecución de pruebas QAS",
             response: {
                 200: { type: "object", additionalProperties: true },
