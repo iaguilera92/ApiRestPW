@@ -209,4 +209,55 @@ export async function trabajosRoutes(app: FastifyInstance) {
         }
         return { ok: true };
     });
+
+    // 6. Crear con error (simula error de tipo de dato)
+    app.post("/api/trabajos/crear-con-error", {
+        schema: {
+            tags: ["Trabajos"],
+            operationId: "CrearConError",
+            summary: "Trabajos/CrearConError",
+            body: {
+                type: "object",
+                required: ["sitio_web"],
+                properties: {
+                    sitio_web: { type: "string" },
+                    porcentaje: { type: "integer" },
+                },
+            },
+            response: {
+                400: {
+                    type: "object",
+                    properties: {
+                        error: { type: "string" },
+                        archivo: { type: "string" },
+                        linea: { type: "integer" },
+                    },
+                },
+            },
+        },
+    }, async (req: any, reply) => {
+        const { sitio_web, porcentaje } = req.body;
+
+        if (typeof sitio_web !== "string" || !sitio_web.startsWith("http")) {
+            return reply.code(400).send({
+                error: "sitio_web debe ser una URL válida (ej: https://ejemplo.cl)",
+                archivo: "src/routes/trabajos.ts",
+                linea: 230,
+            });
+        }
+
+        if (porcentaje !== undefined && (porcentaje < 0 || porcentaje > 100)) {
+            return reply.code(400).send({
+                error: "porcentaje debe ser entre 0 y 100",
+                archivo: "src/routes/trabajos.ts",
+                linea: 237,
+            });
+        }
+
+        return reply.code(400).send({
+            error: "Endpoint de prueba — simula error controlado",
+            archivo: "src/routes/trabajos.ts",
+            linea: 243,
+        });
+    });
 }

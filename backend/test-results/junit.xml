@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="7" failures="0" errors="0" time="3.035">
-  <testsuite name="Trabajos" errors="0" failures="0" skipped="0" timestamp="2026-08-16T15:49:48" time="2.927" tests="7">
-    <testcase classname="Trabajos" name="Trabajos/Buscar" time="0.268">
+<testsuites name="jest tests" tests="8" failures="0" errors="0" time="2.649">
+  <testsuite name="Trabajos" errors="0" failures="0" skipped="0" timestamp="2026-08-16T16:34:50" time="2.556" tests="8">
+    <testcase classname="Trabajos" name="Trabajos/Buscar" time="0.331">
     </testcase>
-    <testcase classname="Trabajos" name="Trabajos/Crear" time="0.179">
+    <testcase classname="Trabajos" name="Trabajos/Crear" time="0.213">
     </testcase>
-    <testcase classname="Trabajos" name="Trabajos/Leer" time="0.174">
+    <testcase classname="Trabajos" name="Trabajos/Leer" time="0.187">
     </testcase>
     <testcase classname="Trabajos" name="Trabajos/Actualizar" time="0.18">
     </testcase>
-    <testcase classname="Trabajos" name="Trabajos/Eliminar" time="0.171">
+    <testcase classname="Trabajos" name="Trabajos/Eliminar" time="0.175">
     </testcase>
-    <testcase classname="Trabajos" name="Trabajos/Verificar eliminación" time="0.172">
+    <testcase classname="Trabajos" name="Trabajos/CrearConError" time="0.006">
     </testcase>
-    <testcase classname="Sistema" name="Sistema/Health check" time="0.004">
+    <testcase classname="Trabajos" name="Trabajos/Verificar eliminación" time="0.175">
+    </testcase>
+    <testcase classname="Sistema" name="Sistema/Health check" time="0.003">
     </testcase>
   </testsuite>
 </testsuites>
