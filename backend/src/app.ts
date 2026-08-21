@@ -15,6 +15,7 @@ import { pruebasQasRoutes } from "./routes/pruebas-qas";
 export async function buildApp() {
     const app = Fastify({ logger: false });
 
+
     await app.register(cors, {
         origin: "*",
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
